@@ -2,39 +2,68 @@ import pandas as pd
 import statsmodels.formula.api as sm
 import math
 import random
+import csv
 
-data = pd.read_csv('train.csv')
+print 'script started'
 
+datafile = open('train.csv', 'r')
+datareader = csv.reader(datafile)
 
+print 'datareader created'
 
-model = sm.ols(" SalaryNormalized ~ LocationNormalized + ContractTime + Category + LocationNormalized:Category", data).fit()
-model.summary()
+data = []
+for row in datareader:
+	data.append(row)
+
+print len(data)
+
+print 'data created'
+# model = sm.ols(" SalaryNormalized ~ LocationNormalized + ContractTime + Category + LocationNormalized:Category", data).fit()
+# model.summary()
 
 def parse(data):
 
-	original_size = len(data.index)
+	print 'started parse'
 
-	training_size = len(data.index)
+	original_size = len(data)
+
+	training_size = len(data)
 
 	testing_size = 1
 
-	row = random.randint(1, len(data.index))
+	row = random.randint(0, len(data)-1)
 
-	testing_data = data.iloc[row]
-	training_data = data.drop(row)
+	testing_data = data.pop(row)
+	training_data = data
+
+	counter = 0
+
+	headers = ['Title', 'FullDescription', 'LocationRaw', 'LocationNormalized', 'ContractType', 'ContractTime', 'Company', 'Category', 'SalaryRaw', 'SalaryNormalized', 'SourceName']
 
 	while testing_size/original_size < 0.2 and training_size/original_size > 0.8:
 
-		row = random.randint(1, len(training_data.index))
+		print 'testing_size/original_size: '  + str(float(testing_size)/original_size)
+		print 'training_size/original_size: ' + str(float(training_size)/original_size) 
 
-		testing_data.join(training_data.iloc[row])
-		training_data = training_data.drop(row)
 
-		testing_size = len(testing_data.index)
-		training_size = len(training_data.index)
+		counter += 1
 
-	end
+		row = random.randint(0, len(training_data) - 1)
 
-	return [training_data, testing_data]
+		print 'row: ' + str(row)
+		print 'count: ' + str(len(training_data))
 
-end
+		testing_data.append(training_data.pop(row))
+
+		testing_size = float(len(testing_data))
+		training_size = float(len(training_data))
+
+		print 'testing_size: ' + str(len(testing_data))
+		print 'training_size: ' + str(len(training_data))
+		print ''
+
+	return [pd.DataFame(training_data, columns=header), pd.DataFrame(testing_data, columns=headers)]
+
+split_data = parse(data)
+
+print split_data
