@@ -4,7 +4,15 @@ import math
 import random
 import csv
 
-print 'script started'
+
+#################################################################################
+# Initial parsing script
+#################################################################################
+
+print '#' * 75
+print 'DATA PARSING SCRIPT INITIATED'
+print '#' * 75
+
 
 datafile = open('train.csv', 'r')
 datareader = csv.reader(datafile)
@@ -18,8 +26,6 @@ for row in datareader:
 print len(data)
 
 print 'data created'
-# model = sm.ols(" SalaryNormalized ~ LocationNormalized + ContractTime + Category + LocationNormalized:Category", data).fit()
-# model.summary()
 
 def parse(data):
 
@@ -90,3 +96,22 @@ split_data = parse(data)
 
 print split_data[0]
 print split_data[1]
+
+training_set = split_data[0]
+testing_set = split_data[1]
+
+print '#' * 75
+print 'DATA PARSING SCRIPT COMPLETE'
+print '#' * 75
+
+#################################################################################
+# Model fitting script
+#################################################################################
+
+
+print '#' * 75
+print 'MODEL FITTING SCRIPT INITIATED'
+print '#' * 75
+
+model = sm.ols(" SalaryNormalized ~ LocationNormalized + ContractTime + Category + LocationNormalized:Category", training_set).fit()
+model.summary()
