@@ -1,5 +1,8 @@
 import pandas as pd
 import statsmodels.formula.api as sm
+from patsy import dmatrices
+from sklearn.linear_model import LinearRegression
+from sklearn import linear_model
 import math
 import random
 import csv
@@ -105,7 +108,7 @@ print 'DATA PARSING SCRIPT COMPLETE'
 print '#' * 75
 
 #################################################################################
-# Model fitting script
+# Model fitting script from statsmodel
 #################################################################################
 
 
@@ -113,5 +116,28 @@ print '#' * 75
 print 'MODEL FITTING SCRIPT INITIATED'
 print '#' * 75
 
-model = sm.ols(" SalaryNormalized ~ LocationNormalized + ContractTime + Category + LocationNormalized:Category", training_set).fit()
+model = sm.ols("SalaryNormalized ~ LocationNormalized + Category + LocationNormalized:Category", training_set).fit()
 model.summary()
+
+#################################################################################
+# Model fitting script from Sklearn, using dmatrices.
+# Allows for LinearRegression model with regularization
+#################################################################################
+
+y, X = dmatrices('SalaryNormalized ~ LocationNormalized + Category + LocationNormalized:Category', data=training_set, return_type='dataframe')
+
+model = LinearRegression()
+model = model.fit(X,y)
+model.score(X,y)
+
+model = linear_model.Ridge(alpha = .5)
+model.fit(X,y)
+
+print model.coef_
+
+model = linear_model.RidgeCV(alphas=[0.1, 1.0, 10.0])
+model.fit(X,y)
+
+print model.coef_
+print model.alpha_
+
