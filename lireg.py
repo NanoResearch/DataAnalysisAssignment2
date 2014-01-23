@@ -3,6 +3,7 @@ import statsmodels.formula.api as sm
 from patsy import dmatrices
 from sklearn.linear_model import LinearRegression
 from sklearn import linear_model
+from sklearn.cross_validation import cross_val_score
 import math
 import random
 import csv
@@ -140,4 +141,8 @@ model.fit(X,y)
 
 print model.coef_
 print model.alpha_
+
+# http://scikit-learn.org/stable/modules/cross_validation.html
+
+
 
